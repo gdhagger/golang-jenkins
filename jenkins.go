@@ -228,6 +228,12 @@ func (jenkins *Jenkins) GetQueue() (queue Queue, err error) {
 	return
 }
 
+// GetQueueItem returns a single queue item
+func (jenkins *Jenkins) GetQueueItem(itemNo int) (item Item, err error) {
+	err = jenkins.get(fmt.Sprintf("/queue/item/%s", itemNo), nil, &item)
+	return
+}
+
 // GetArtifact return the content of a build artifact
 func (jenkins *Jenkins) GetArtifact(build Build, artifact Artifact) ([]byte, error) {
 	requestUrl := fmt.Sprintf("%s/artifact/%s", build.Url, artifact.RelativePath)

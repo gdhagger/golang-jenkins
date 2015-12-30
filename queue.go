@@ -5,18 +5,19 @@ type Queue struct {
 }
 
 type Item struct {
-	Actions                    []Action `json:"actions"`
-	Blocked                    bool     `json:"blocked"`
-	Buildable                  bool     `json:"buildable"`
-	Id                         int      `json:"id"`
-	InQueueSince               int64    `json:"inQueueSince"`
-	Params                     string   `json:"params"`
-	Stuck                      bool     `json:"stuck"`
-	Task                       Task     `json:"task"`
-	URL                        string   `json:"url"`
-	Why                        string   `json:"why"`
-	BuildableStartMilliseconds int64    `json:"buildableStartMilliseconds"`
-	Pending                    bool     `json:"pending"`
+	Actions                    []Action   `json:"actions"`
+	Blocked                    bool       `json:"blocked"`
+	Buildable                  bool       `json:"buildable"`
+	Id                         int        `json:"id"`
+	InQueueSince               int64      `json:"inQueueSince"`
+	Params                     string     `json:"params"`
+	Stuck                      bool       `json:"stuck"`
+	Task                       Task       `json:"task"`
+	URL                        string     `json:"url"`
+	Why                        string     `json:"why"`
+	BuildableStartMilliseconds int64      `json:"buildableStartMilliseconds"`
+	Pending                    bool       `json:"pending"`
+	Executable                 Executable `json:"executable"`
 }
 
 type Action struct {
@@ -33,4 +34,9 @@ type Task struct {
 	Name  string `json:"name"`
 	Url   string `json:"url"`
 	Color string `json:"color"`
+}
+
+type Executable struct {
+	number int    `json:"number"`
+	Url    string `json:"url"`
 }
