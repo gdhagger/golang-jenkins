@@ -10,6 +10,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
+	"strings"
 )
 
 type Auth struct {
@@ -65,6 +67,18 @@ func (jenkins *Jenkins) parseResponse(resp *http.Response, body interface{}) (er
 	defer resp.Body.Close()
 
 	if body == nil {
+		// If the response contains only a location header pointing to a queue item, return that
+		// queue item.
+		switch body.(type) {
+		case *Item:
+			loc := resp.Header.Get("Location")
+			if loc != "" {
+				// FIXME: this will break if jenkins isn't at the root of the webserver url
+				itemNo, _ := strconv.Atoi(strings.Split(loc, "/")[5])
+				body, err = jenkins.GetQueueItem(itemNo)
+				return
+			}
+		}
 		return
 	}
 
@@ -197,12 +211,13 @@ func (jenkins *Jenkins) CreateView(listView ListView) error {
 
 // Create a new build for this job.
 // Params can be nil.
-func (jenkins *Jenkins) Build(job Job, params url.Values) error {
+func (jenkins *Jenkins) Build(job Job, params url.Values) (item Item, err error) {
 	if params == nil {
-		return jenkins.post(fmt.Sprintf("/job/%s/build", job.Name), params, nil)
+		err = jenkins.post(fmt.Sprintf("/job/%s/build", job.Name), params, &item)
 	} else {
-		return jenkins.post(fmt.Sprintf("/job/%s/buildWithParameters", job.Name), params, nil)
+		err = jenkins.post(fmt.Sprintf("/job/%s/buildWithParameters", job.Name), params, &item)
 	}
+	return
 }
 
 // Get the console output from a build.
